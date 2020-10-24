@@ -5,7 +5,7 @@ public class Client {
     public void run(String address, int port) {
         Socket clientSocket = null;
         DataInputStream input = null;
-        DataOutputStream out = null;
+        ObjectOutputStream out = null;
 
         //connect to server
         try {
@@ -13,10 +13,10 @@ public class Client {
             System.out.println("Connected to server");
 
             // takes input from terminal
-            input  = new DataInputStream(System.in);
+            input = new DataInputStream(System.in);
 
             // sends output to the socket
-            out    = new DataOutputStream(clientSocket.getOutputStream());
+            out = new ObjectOutputStream(clientSocket.getOutputStream());
         }
         catch(IOException i) {
             System.out.println(i);
@@ -29,6 +29,9 @@ public class Client {
         while (!line.equals("Over")) {
             try {
                 line = input.readLine();
+                CRIMP crimp = new CRIMP();
+                String message = crimp.getPrefix() + " " + crimp.getCommand();
+                out.writeObject(message);
                 out.writeUTF(line);
             }
             catch(IOException i) {

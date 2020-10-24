@@ -2,24 +2,38 @@ import java.net.*;
 import java.io.*;
 
 public class Client {
-    public void run(String address, int port) {
-        Socket clientSocket = null;
-        DataInputStream input = null;
-        ObjectOutputStream out = null;
+    Socket clientSocket = null;
+    DataInputStream input = null;
+    ObjectOutputStream out = null;
+
+    public static void main(String argv[]){
+        Client client = new Client();
 
         //connect to server
+        client.connect("127.0.0.1", 6789);
+
+        //exchange messages with the server
+        client.communicate();
+    }
+
+    public void connect(String address, int port) {
         try {
             clientSocket = new Socket(address, port);
             System.out.println("Connected to server");
+        } catch (IOException i) {
+            System.out.println(i);
+        }
+    }
 
-            // takes input from terminal
-            input = new DataInputStream(System.in);
+    protected void communicate(){
+        // takes input from terminal
+        input = new DataInputStream(System.in);
 
+        try {
             // sends output to the socket
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-        }
-        catch(IOException i) {
-            System.out.println(i);
+        }catch(IOException io){
+            System.out.print(io);
         }
 
         // string to read message from input
@@ -48,10 +62,5 @@ public class Client {
         catch(IOException i) {
             System.out.println(i);
         }
-    }
-
-    public static void main(String argv[]){
-        Client client = new Client();
-        client.run("127.0.0.1", 6789);
     }
 }

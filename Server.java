@@ -5,12 +5,13 @@ public class Server {
     public void run(int port){
         ServerSocket welcomeSocket;
 
+        System.out.println("Server process initiated");
+        System.out.println("Listening on port " + port);
+
         //start server, run persistently
         while(true) {
             try {
                 welcomeSocket = new ServerSocket(port);
-                System.out.println("Server process initiated");
-                System.out.println("Listening on port " + port);
 
                 Socket connectionSocket = welcomeSocket.accept();
                 System.out.println("Connected to client");

@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.Scanner;
 
 public class Client {
     Socket clientSocket = null;
@@ -10,18 +11,63 @@ public class Client {
         Client client = new Client();
 
         //connect to server
-        client.connect("127.0.0.1", 6789);
+        boolean connected = client.connect("127.0.0.1", 6789);
+        if(connected)
+            System.out.println("Connected to server");
+        else
+            System.out.println("Error connecting to server");
 
         int choice = Menu.topMenu();
+
+        while (4 != choice){
+            if (1 == choice){
+                System.out.print("You chose 1");
+            }
+            else if (2 == choice){
+                System.out.print("You chose 2");
+            }
+            else if (3 == choice) {
+                System.out.print("Your chose 3");
+            }
+
+            choice = Menu.topMenu();
+        }
+
+        //disconnect from server
+        boolean disconnected = client.disconnect();
+        if(disconnected)
+            System.out.println("Disconnected from server");
+        else
+            System.out.println("Error disconnecting from server");
     }
 
-    public void connect(String address, int port) {
+    public boolean connect(String address, int port) {
+        boolean success = false;
+
         try {
             clientSocket = new Socket(address, port);
-            System.out.println("Connected to server");
+            success = true;
         } catch (IOException i) {
             System.out.println(i);
         }
+
+        return success;
+    }
+
+    public boolean disconnect(){
+        boolean success = false;
+
+        try {
+            //input.close();
+            //out.close();
+            clientSocket.close();
+            success = true;
+        }
+        catch(IOException i) {
+            System.out.println(i);
+        }
+
+        return success;
     }
 
     protected void communicate(){
@@ -50,16 +96,6 @@ public class Client {
             catch(IOException i) {
                 System.out.println(i);
             }
-        }
-
-        // close the connection
-        try {
-            input.close();
-            out.close();
-            clientSocket.close();
-        }
-        catch(IOException i) {
-            System.out.println(i);
         }
     }
 }

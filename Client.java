@@ -12,8 +12,7 @@ public class Client {
         //connect to server
         client.connect("127.0.0.1", 6789);
 
-        //exchange messages with the server
-        client.communicate();
+        int choice = Menu.topMenu();
     }
 
     public void connect(String address, int port) {

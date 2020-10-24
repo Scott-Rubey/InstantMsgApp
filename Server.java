@@ -1,8 +1,7 @@
 import java.net.*;
 import java.io.*;
 
-public class Server
-{
+public class Server {
     public void run(int port){
         ServerSocket welcomeSocket;
 
@@ -43,8 +42,7 @@ public class Server
         }
     }
 
-    public static void main(String args[])
-    {
+    public static void main(String args[]) {
         Server server = new Server();
         server.run(6789);
     }

@@ -8,6 +8,7 @@ public class Client
     private DataInputStream  input   = null;
     private DataOutputStream out     = null;
 
+
     // constructor to put ip address and port
     public Client(String address, int port)
     {
@@ -15,7 +16,7 @@ public class Client
         try
         {
             socket = new Socket(address, port);
-            System.out.println("Connected");
+            System.out.println("Connected to server");
 
             // takes input from terminal
             input  = new DataInputStream(System.in);
@@ -35,20 +36,6 @@ public class Client
         // string to read message from input
         String line = "";
 
-        // keep reading until "Over" is input
-        while (!line.equals("Over"))
-        {
-            try
-            {
-                line = input.readLine();
-                out.writeUTF(line);
-            }
-            catch(IOException i)
-            {
-                System.out.println(i);
-            }
-        }
-
         // close the connection
         try
         {
@@ -64,6 +51,6 @@ public class Client
 
     public static void main(String args[])
     {
-        Client client = new Client("127.0.0.1", 5000);
+        Client client = new Client("127.0.0.1", 6789);
     }
 }

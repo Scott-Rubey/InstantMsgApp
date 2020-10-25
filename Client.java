@@ -45,7 +45,11 @@ public class Client {
                 command = username + " CTRM " + newRoomName;
             }
 
-            boolean success = client.sendCommand(command);
+            //send command to the server
+            String retMsg = client.sendCommand(command);
+
+            //print the returned message from the server
+            System.out.print(retMsg);
 
             choice = Menu.topMenu();
         }
@@ -71,27 +75,25 @@ public class Client {
         return success;
     }
 
-    protected boolean sendCommand(String command){
-        boolean success = false;
+    protected String sendCommand(String command){
+        String message = "";
 
         try {
             //send command to server
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             out.writeObject(command);
 
+            //read message returned from server
             inputStream = new ObjectInputStream(clientSocket.getInputStream());
             Object obj = inputStream.readObject();
-            String objStr = obj.toString();
-
-            success = true;
+            message = obj.toString();
         }catch(IOException io){
-            System.out.print("Server communcation error");
+            message = "Server communcation error";
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        //TODO: return boolean from server
-        return success;
+        return message;
     }
 
     protected boolean disconnect(){

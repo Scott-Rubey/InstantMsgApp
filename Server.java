@@ -27,7 +27,6 @@ public class Server {
         while(true) {
             try {
                 welcomeSocket = new ServerSocket(port);
-//                DataInputStream in = null;
                 ObjectInputStream inputStream = null;
                 ObjectOutputStream out = null;
 
@@ -39,9 +38,6 @@ public class Server {
 
                 while(!code.equals("DSCT")) {
                     try {
-                        /*in = new DataInputStream(
-                                new BufferedInputStream(connectionSocket.getInputStream()));  */
-
                         out = new ObjectOutputStream(connectionSocket.getOutputStream());
                         inputStream = new ObjectInputStream(connectionSocket.getInputStream());
 
@@ -69,7 +65,6 @@ public class Server {
                 // close connection
                 connectionSocket.close();
                 inputStream.close();
-//                in.close();
             } catch (IOException i) {
                 //System.out.println(i);
             }
@@ -120,7 +115,7 @@ public class Server {
 
         rooms.addRoom(room);
 
-        message = "Room created";
+        message = "Room created/n";
 
         return message;
     }

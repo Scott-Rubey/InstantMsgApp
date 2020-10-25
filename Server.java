@@ -46,13 +46,13 @@ public class Server {
                         Command command = parseCommand(objStr);
                         code = command.getCode();
 
-                        //TODO: compare user to list, add if not already in the DB
-
                         //only perform commands if not "disconnect" code
                         if(!code.equals("DSCT")){
                             String retMsg = exec(command);
                             out.writeObject(retMsg);
                         }
+
+                        //TODO: deal with socket exception messages
                     } catch (IOException i) {
                         System.out.println(i);
                     } catch (ClassNotFoundException c) {
@@ -75,7 +75,7 @@ public class Server {
         //split message from client into individual words
         //first two are prefix and code, then rejoin the rest to create message
         String[] split = objStr.split(" ");
-        String prefix = split[0];
+        String name = split[0];
         String code = split[1];
         String message = "";
 
@@ -85,9 +85,36 @@ public class Server {
                 message += split[i];
         }
 
-        Command command = new Command(prefix, code, message);
+        User user = addUser(name);
+        Command command = new Command(user, code, message);
 
         return command;
+    }
+
+    protected User findUser(String name){
+        User user = null;
+        boolean found = false;
+
+        //find out if user currently resides in the database
+        for(int i = 0; i < users.getUsers().size(); ++i){
+            if(name.equals(users.getUsers().get(i).getName())) {
+                user = users.getUsers().get(i);
+                found = true;
+            }
+        }
+
+        //if not, add user
+        if(!found)
+            user = addUser(name);
+
+        return user;
+    }
+
+    protected User addUser(String name){
+        User user = new User(name);
+        users.addUser(user);
+
+        return user;
     }
 
     protected String exec(Command command) {
@@ -101,6 +128,9 @@ public class Server {
             case "LIST":
                 retMsg = listRooms();
                 break;
+            case "JOIN":
+                retMsg = joinRoom(command);
+                break;
         }
 
         return retMsg;
@@ -110,12 +140,19 @@ public class Server {
         String name = command.getMessage();
         String message = "";
         Room room = new Room(name);
+        boolean found = false;
 
-        //TODO: search rooms to make sure this isn't a duplicate; rtn false and notify client if duplicate
+        for(int i = 0; i < rooms.getRooms().size(); ++i){
+            if(name.equals(rooms.getRooms().get(i).getName()))
+                found = true;
+        }
 
-        rooms.addRoom(room);
-
-        message = "Room created/n";
+        if(found)
+            message = "A room by that name already exists.  Please choose a different name.\n";
+        else {
+            rooms.addRoom(room);
+            message = "Room created.\n";
+        }
 
         return message;
     }
@@ -130,6 +167,17 @@ public class Server {
         }
         else
             message = "There are currently no rooms available to list\n";
+
+        return message;
+    }
+
+    protected String joinRoom(Command command){
+        String message = "";
+
+        int i = Integer.parseInt(command.getMessage());
+        int roomNbr = i-1;
+        Room room = rooms.getRooms().get(roomNbr);
+//        room.
 
         return message;
     }

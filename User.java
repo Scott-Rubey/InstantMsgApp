@@ -1,11 +1,11 @@
 public class User {
-    protected String user;
+    protected String name;
 
-    protected User(String user){
-        this.user = user;
+    protected User(String name){
+        this.name = name;
     }
 
-    protected String getUser(){
-        return this.user;
+    protected String getName(){
+        return this.name;
     }
 }

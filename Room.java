@@ -14,4 +14,8 @@ public class Room {
     protected UserList getUsers(){
         return this.users;
     }
+
+    protected void addUser(User u){
+        users.addUser(u);
+    }
 }

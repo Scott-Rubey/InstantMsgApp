@@ -34,7 +34,11 @@ public class Client {
             }
             //if user opts to join an existing room
             else if (2 == choice){
-                System.out.print("You chose 2");
+                System.out.println("Please enter the number of the room you would like to join: ");
+                int roomNum = in.nextInt();
+                in.nextLine();
+
+                command = username + " JOIN " + roomNum;
             }
             //if user opts to create a new room
             else if (3 == choice) {

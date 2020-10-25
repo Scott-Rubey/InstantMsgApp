@@ -4,7 +4,7 @@ public class RoomList {
     protected ArrayList<Room> rooms;
 
     protected RoomList(){
-        rooms = new ArrayList<Room>();
+        rooms = new ArrayList<>();
     }
 
     protected void addRoom(Room room){

@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class Menu {
     protected static Scanner input = new Scanner(System.in);
 
-    public static int topMenu()
+    protected static int topMenu()
     {
         int menuOption = 0;
 
@@ -29,7 +29,7 @@ public class Menu {
         return menuOption;
     }
 
-    public static int roomMenu()
+    protected static int roomMenu()
     {
         int menuOption = 0;
 

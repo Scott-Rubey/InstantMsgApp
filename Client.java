@@ -4,10 +4,10 @@ import java.util.Scanner;
 
 public class Client {
     protected static Socket clientSocket = null;
-    protected static DataInputStream input = null;
     protected static ObjectOutputStream out = null;
     protected static Scanner in = new Scanner(System.in);
     protected static String username = null;
+    protected static ObjectInputStream inputStream = null;
 
     public static void main(String argv[]){
         Client client = new Client();
@@ -78,9 +78,16 @@ public class Client {
             //send command to server
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             out.writeObject(command);
+
+            inputStream = new ObjectInputStream(clientSocket.getInputStream());
+            Object obj = inputStream.readObject();
+            String objStr = obj.toString();
+
             success = true;
         }catch(IOException io){
             System.out.print("Server communcation error");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
         //TODO: return boolean from server

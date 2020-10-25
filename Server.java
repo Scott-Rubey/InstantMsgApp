@@ -27,7 +27,9 @@ public class Server {
         while(true) {
             try {
                 welcomeSocket = new ServerSocket(port);
-                DataInputStream in = null;
+//                DataInputStream in = null;
+                ObjectInputStream inputStream = null;
+                ObjectOutputStream out = null;
 
                 Socket connectionSocket = welcomeSocket.accept();
                 System.out.println("Connected to client");
@@ -37,12 +39,13 @@ public class Server {
 
                 while(!code.equals("DSCT")) {
                     try {
-                        in = new DataInputStream(
-                                new BufferedInputStream(connectionSocket.getInputStream()));
+                        /*in = new DataInputStream(
+                                new BufferedInputStream(connectionSocket.getInputStream()));  */
 
-                        ObjectInputStream objInStr = new ObjectInputStream(connectionSocket.getInputStream());
+                        out = new ObjectOutputStream(connectionSocket.getOutputStream());
+                        inputStream = new ObjectInputStream(connectionSocket.getInputStream());
 
-                        obj = objInStr.readObject();
+                        obj = inputStream.readObject();
                         String objStr = obj.toString();
                         Command command = parseCommand(objStr);
                         code = command.getCode();
@@ -51,7 +54,8 @@ public class Server {
 
                         //only perform commands if not "disconnect" code
                         if(!code.equals("DSCT")){
-                            exec(command);
+                            String retMsg = exec(command);
+                            out.writeObject(retMsg);
                         }
                     } catch (IOException i) {
                         System.out.println(i);
@@ -64,7 +68,8 @@ public class Server {
 
                 // close connection
                 connectionSocket.close();
-                in.close();
+                inputStream.close();
+//                in.close();
             } catch (IOException i) {
                 //System.out.println(i);
             }
@@ -90,31 +95,47 @@ public class Server {
         return command;
     }
 
-    protected void exec(Command command) {
+    protected String exec(Command command) {
         String code = command.getCode();
+        String retMsg = "";
 
         switch(code){
             case "CTRM":
-                createRoom(command);
+                retMsg = createRoom(command);
                 break;
             case "LIST":
-                listRooms();
+                retMsg = listRooms();
                 break;
         }
+
+        return retMsg;
     }
 
-    protected void createRoom(Command command){
+    protected String createRoom(Command command){
         String name = command.getMessage();
+        String message = "";
         Room room = new Room(name);
 
         //TODO: search rooms to make sure this isn't a duplicate; rtn false and notify client if duplicate
 
         rooms.addRoom(room);
+
+        message = "Room created";
+
+        return message;
     }
 
-    protected void listRooms(){
-        for(int i = 0; i < rooms.getRooms().size(); ++i){
-            System.out.print(rooms.getRooms().get(i).getName() + "\n");
+    protected String listRooms(){
+        String message = "";
+
+        //return message reflects either the list of available rooms, or that there are none to list
+        if(rooms.getRooms().size() > 0) {
+            for (int i = 0; i < rooms.getRooms().size(); ++i)
+                message += i+1 + ". " + rooms.getRooms().get(i).getName() + "\n";
         }
+        else
+            message = "There are currently no rooms available to list\n";
+
+        return message;
     }
 }

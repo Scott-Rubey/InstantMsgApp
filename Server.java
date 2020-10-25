@@ -173,11 +173,31 @@ public class Server {
 
     protected String joinRoom(Command command){
         String message = "";
+        User user = command.getUser();
 
+        //parse the room index from the command
         int i = Integer.parseInt(command.getMessage());
         int roomNbr = i-1;
-        Room room = rooms.getRooms().get(roomNbr);
-//        room.
+
+        //find the room
+        if(i < 1 || i > rooms.getRooms().size())
+            message = "Room index out of range.\n";
+        else {
+            Room room = rooms.getRooms().get(roomNbr);
+            room.addUser(user);
+            message = "You have been added to " + room.name + "\n";
+        }
+
+        return message;
+    }
+
+    protected String listUsers(Command command){
+        String message = "";
+        //code got a little funky -- here's a start
+
+/*        for(int j = 0; j < room.getUsers().size(); ++j){
+            System.out.print(room.users.get(j).name);
+        }          */
 
         return message;
     }

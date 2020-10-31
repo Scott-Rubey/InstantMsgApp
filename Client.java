@@ -47,6 +47,22 @@ public class Client {
 
                 command = username + " CTRM " + newRoomName;
             }
+            //if user opts to list all users in a chat room
+            else if (4 == choice){
+                System.out.print("LSRM not yet implemented\n");
+            }
+            //if user opts to post a message to a chat room
+            else if (5 == choice){
+                System.out.print("POST not yet implemented\n");
+            }
+            //if user opts to retrieve all messages posted to a chat room
+            else if (6 == choice){
+                System.out.print("RETV not yet implemented\n");
+            }
+            //if user opts to leave a chat room
+            else if (7 == choice){
+                System.out.print("LEAV not yet implemented\n");
+            }
 
             //send command to the server, capture the server's return message
             String retMsg = client.sendCommand(command);

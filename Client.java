@@ -116,3 +116,5 @@ public class Client {
         return success;
     }
 }
+
+//TODO: return message handler: switch stmt containing server responses that returns client output

@@ -73,20 +73,28 @@ public class Server {
 
     protected Command parseCommand(String objStr){
         //split message from client into individual words
-        //first two are prefix and code, then rejoin the rest to create message
+        //the first two are username and command code
+        //the third, if present, is roomname
+        //then rejoin anything remaining to create message from user
+
         String[] split = objStr.split(" ");
         String name = split[0];
         String code = split[1];
+        String roomName = "";
         String message = "";
 
-        //only add message if it exists
-        if(split.length > 2) {
-            for (int i = 2; i < split.length; ++i)
+        //if third arg present, it's the roomName
+        if(split.length >2)
+           roomName = split[2];
+
+        //anything else in the array is the message from the user
+        if(split.length > 3) {
+            for (int i = 3; i < split.length; ++i)
                 message += split[i];
         }
 
         User user = addUser(name);
-        Command command = new Command(user, code, message);
+        Command command = new Command(user, code, roomName, message);
 
         return command;
     }
@@ -122,12 +130,15 @@ public class Server {
         String retMsg = "";
 
         switch(code){
+            /*create room*/
             case "CTRM":
                 retMsg = createRoom(command);
                 break;
+            /* list rooms */
             case "LIST":
                 retMsg = listRooms();
                 break;
+            /* join room */
             case "JOIN":
                 retMsg = joinRoom(command);
                 break;
@@ -136,22 +147,29 @@ public class Server {
         return retMsg;
     }
 
+    //create a chatroom
     protected String createRoom(Command command){
-        String name = command.getMessage();
+        String roomName = command.getRoom();
         String message = "";
-        Room room = new Room(name);
         boolean found = false;
 
+        //search to see if roomname already exists
         for(int i = 0; i < rooms.getRooms().size(); ++i){
-            if(name.equals(rooms.getRooms().get(i).getName()))
+            if(roomName.equals(rooms.getRooms().get(i).getName()))
                 found = true;
         }
 
-        if(found)
-            message = "A room by that name already exists.  Please choose a different name.\n";
+        //if roomname already exists, return error
+        if(found) {
+            message = "ERR_DUPLICATEROOM";
+            //message = "A room by that name already exists.  Please choose a different name.\n";
+        }
+        //otherwise, create room, add to rooms list, and return OK
         else {
+            Room room = new Room(roomName);
             rooms.addRoom(room);
-            message = "Room created.\n";
+            //message = "Room created.\n";
+            message = "OK";
         }
 
         return message;
@@ -202,3 +220,8 @@ public class Server {
         return message;
     }
 }
+
+//TODO: when server gets a request to post a message to a room, it responds by sending all messages to every client on the userlist
+//And remember, the server needs to know which room it is posting a message to.  Do I need another field in the string for this?
+
+//TODO: parser needs to handle roomname and message

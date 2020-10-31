@@ -209,12 +209,11 @@ public class Server {
         boolean found = false;
         int i = 0;
 
+        //find room if it exists and exit loop
         while(!found && i < rooms.getRooms().size()){
             if(roomName.equals(rooms.getRooms().get(i).getName())){
                 found = true;
                 room = rooms.getRooms().get(i);
-                //room.addUser(user);
-                //message = "OK_JOIN";
             }
             ++i;
         }

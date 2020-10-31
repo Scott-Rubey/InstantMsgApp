@@ -25,7 +25,7 @@ public class Client {
 
         int choice = Menu.topMenu();
 
-        while (4 != choice){
+        while (8 != choice){
             String command = null;
 
             //if user opts to list existing rooms

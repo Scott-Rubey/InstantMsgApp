@@ -43,13 +43,15 @@ public class Client {
             else if (3 == choice) {
                 System.out.print("Please enter the name of the room you would like to create: ");
                 String newRoomName = in.next();
-                System.out.print("\n");
 
                 command = username + " CTRM " + newRoomName;
             }
             //if user opts to list all users in a chat room
             else if (4 == choice){
-                System.out.print("LSRM not yet implemented\n");
+                System.out.print("Please enter the name of the room whose members you would like to list: ");
+                String roomName = in.next();
+
+                command = username + " LSMB " + roomName;
             }
             //if user opts to post a message to a chat room
             else if (5 == choice){
@@ -149,8 +151,14 @@ public class Client {
             case "ERR_NOTINROOM":
                 toPrint = "\nYou are not currently in that room\n";
                 break;
+            case "ERR_ROOMEMPTY":
+                toPrint = "\nRoom is empty\n";
+                break;
+            case "ERR_ILLEGALCOMMAND":
+                toPrint = "\nClient error: illegal command.  Please contact the developer.\n";
+                break;
             default:
-                toPrint = retMsg;
+                toPrint = "\n" + retMsg;
         }
 
         return toPrint;
@@ -161,8 +169,6 @@ public class Client {
         boolean success = false;
 
         try {
-            //input.close();
-            //out.close();
             clientSocket.close();
             success = true;
         }

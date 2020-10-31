@@ -146,6 +146,11 @@ public class Server {
             case "LEAV":
                 retMsg = leaveRoom(command);
                 break;
+            case "LSMB":
+                retMsg = listMembers(command);
+                break;
+            default:
+                retMsg = "ERR_ILLEGALCOMMAND";
         }
 
         return retMsg;
@@ -211,6 +216,31 @@ public class Server {
         return message;
     }
 
+    //list all members in a chat room
+    protected String listMembers(Command command){
+        String message = "";
+        User user = command.getUser();
+        String roomName = command.getRoom();
+
+        Room room = rooms.findRoom(roomName);
+
+        //if room exists but is empty, return error
+        if(room != null && room.getUsers().size() == 0)
+            message = "ERR_ROOMEMPTY";
+
+        //if room exists and has members, create a list
+        else if(room != null && room.getUsers().size() > 0){
+            for(int i = 0; i < room.getUsers().size(); ++i)
+                message += room.users.get(i).name + "\n";
+        }
+
+        //if room exists but is empty, return error
+        else
+            message = "ERR_NONEXISTENTROOM";
+
+        return message;
+    }
+
     //leave a chat room
     protected String leaveRoom(Command command){
         String message = "";
@@ -234,18 +264,6 @@ public class Server {
         //if room does not exist, return error
         else
             message = "ERR_NONEXISTENTROOM";
-
-        return message;
-    }
-
-    //list users in a particular room
-    protected String listUsers(Command command){
-        String message = "";
-        //code got a little funky -- here's a start
-
-/*        for(int j = 0; j < room.getUsers().size(); ++j){
-            System.out.print(room.users.get(j).name);
-        }          */
 
         return message;
     }

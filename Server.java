@@ -142,6 +142,10 @@ public class Server {
             case "JOIN":
                 retMsg = joinRoom(command);
                 break;
+            /* leave room */
+            case "LEAV":
+                retMsg = leaveRoom(command);
+                break;
         }
 
         return retMsg;
@@ -172,6 +176,7 @@ public class Server {
         return message;
     }
 
+    //list all chat rooms
     protected String listRooms(){
         String message = "";
 
@@ -187,13 +192,15 @@ public class Server {
         return message;
     }
 
+    //join a chat room
     protected String joinRoom(Command command){
         String message = "";
         User user = command.getUser();
         String roomName = command.getRoom();
 
         //verify room is on list; add user to room if found
-        Room room = findRoom(roomName);
+        //Room room = findRoom(roomName);
+        Room room = rooms.findRoom(roomName);
         if(room != null){
             room.addUser(user);
             message = "OK_JOIN";
@@ -204,23 +211,42 @@ public class Server {
         return message;
     }
 
-    protected Room findRoom(String roomName){
-        Room room = null;
-        boolean found = false;
-        int i = 0;
+    //leave a chat room
+    protected String leaveRoom(Command command){
+        String message = "";
+        User user = command.getUser();
+        String roomName = command.getRoom();
 
-        //find room if it exists and exit loop
-        while(!found && i < rooms.getRooms().size()){
-            if(roomName.equals(rooms.getRooms().get(i).getName())){
-                found = true;
-                room = rooms.getRooms().get(i);
+        //if room exists, remove user from userlist
+        Room room = rooms.findRoom(roomName);
+        if(room != null){
+            boolean userInRoom = findUser(user);
+
+            //if user is found in room, remove them and return OK
+            if(userInRoom){
+                room.removeUser(user);
+                message = "OK_LEAV";
             }
-            ++i;
+            //if room exists but user is not on room's userlist, return err
+            else
+                message = "ERR_NOTINROOM";
         }
+        //if room does not exist, return error
+        else
+            message = "ERR_NONEXISTENTROOM";
 
-        return room;
+        return message;
     }
 
+    //determines whether a user is on a room's userlist
+    //returns true if user on list, false otherwise
+    protected boolean findUser(User u){
+        boolean found = false;
+
+        return found;
+    }
+
+    //list users in a particular room
     protected String listUsers(Command command){
         String message = "";
         //code got a little funky -- here's a start

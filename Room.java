@@ -20,4 +20,6 @@ public class Room {
     protected void addUser(User u){
         users.add(u);
     }
+
+    protected void removeUser(User u) { users.remove(u); }
 }

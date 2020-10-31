@@ -61,7 +61,10 @@ public class Client {
             }
             //if user opts to leave a chat room
             else if (7 == choice){
-                System.out.print("LEAV not yet implemented\n");
+                System.out.print("Please enter the name of the room you would like to leave: ");
+                String roomName = in.next();
+
+                command = username + " LEAV " + roomName;
             }
 
             //send command to the server, capture the server's return message

@@ -160,15 +160,12 @@ public class Server {
         }
 
         //if roomname already exists, return error
-        if(found) {
+        if(found)
             message = "ERR_DUPLICATEROOM";
-            //message = "A room by that name already exists.  Please choose a different name.\n";
-        }
         //otherwise, create room, add to rooms list, and return OK
         else {
             Room room = new Room(roomName);
             rooms.addRoom(room);
-            //message = "Room created.\n";
             message = "CTRM_OK";
         }
 
@@ -183,8 +180,10 @@ public class Server {
             for (int i = 0; i < rooms.getRooms().size(); ++i)
                 message += i+1 + ". " + rooms.getRooms().get(i).getName() + "\n";
         }
-        else
-            message = "There are currently no rooms available to list\n";
+        else {
+            //message = "There are currently no rooms available to list\n";
+            message = "ERR_NOROOMS";
+        }
 
         return message;
     }

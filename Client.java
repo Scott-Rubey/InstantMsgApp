@@ -55,9 +55,7 @@ public class Client {
             //send return message to handler, print result
             System.out.print(msgHandler(retMsg));
 
-            //print the returned message from the server
-//            System.out.print(retMsg);
-
+            //return to menu
             choice = Menu.topMenu();
         }
 
@@ -107,14 +105,22 @@ public class Client {
 
     //handle messages returned from server
     protected static String msgHandler(String retMsg){
-        String toPrint = null;
+        String toPrint;
 
+        //return user-friendly message derived from server response.
+        //if server returns info other than OK or ERR msgs, just return that info (i.e. lists, chat messages, etc)
         switch(retMsg){
             case "CTRM_OK":
                 toPrint = "Room Created\n";
                 break;
             case "ERR_DUPLICATEROOM":
                 toPrint = "A room by that name already exists.  Please choose a different name.\n";
+                break;
+            case "ERR_NOROOMS":
+                toPrint = "There are currently no rooms available to list\n";
+                break;
+            default:
+                toPrint = retMsg;
         }
 
         return toPrint;

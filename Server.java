@@ -169,7 +169,7 @@ public class Server {
             Room room = new Room(roomName);
             rooms.addRoom(room);
             //message = "Room created.\n";
-            message = "OK";
+            message = "CTRM_OK";
         }
 
         return message;

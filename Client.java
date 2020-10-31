@@ -49,11 +49,14 @@ public class Client {
                 command = username + " CTRM " + newRoomName;
             }
 
-            //send command to the server
+            //send command to the server, capture the server's return message
             String retMsg = client.sendCommand(command);
 
+            //send return message to handler, print result
+            System.out.print(msgHandler(retMsg));
+
             //print the returned message from the server
-            System.out.print(retMsg);
+//            System.out.print(retMsg);
 
             choice = Menu.topMenu();
         }
@@ -66,6 +69,7 @@ public class Client {
             System.out.println("Error disconnecting from server");
     }
 
+    //connect to the server
     protected boolean connect(String address, int port) {
         boolean success = false;
 
@@ -79,6 +83,7 @@ public class Client {
         return success;
     }
 
+    //send command to the server in the form of a string object
     protected String sendCommand(String command){
         String message = "";
 
@@ -100,6 +105,22 @@ public class Client {
         return message;
     }
 
+    //handle messages returned from server
+    protected static String msgHandler(String retMsg){
+        String toPrint = null;
+
+        switch(retMsg){
+            case "CTRM_OK":
+                toPrint = "Room Created\n";
+                break;
+            case "ERR_DUPLICATEROOM":
+                toPrint = "A room by that name already exists.  Please choose a different name.\n";
+        }
+
+        return toPrint;
+    }
+
+    //disconnect from the server
     protected boolean disconnect(){
         boolean success = false;
 

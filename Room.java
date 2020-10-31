@@ -3,10 +3,12 @@ import java.util.ArrayList;
 public class Room {
     protected String name;
     protected ArrayList<User> users;
+    protected MessageList messages;
 
     protected Room(String name){
         this.name = name;
         this.users = new ArrayList<>();
+        this.messages = new MessageList();
     }
 
     protected String getName(){

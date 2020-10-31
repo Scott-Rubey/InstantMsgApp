@@ -220,7 +220,7 @@ public class Server {
         //if room exists, remove user from userlist
         Room room = rooms.findRoom(roomName);
         if(room != null){
-            boolean userInRoom = findUser(user);
+            boolean userInRoom = room.findUser(user);
 
             //if user is found in room, remove them and return OK
             if(userInRoom){
@@ -236,14 +236,6 @@ public class Server {
             message = "ERR_NONEXISTENTROOM";
 
         return message;
-    }
-
-    //determines whether a user is on a room's userlist
-    //returns true if user on list, false otherwise
-    protected boolean findUser(User u){
-        boolean found = false;
-
-        return found;
     }
 
     //list users in a particular room

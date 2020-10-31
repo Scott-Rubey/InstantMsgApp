@@ -22,4 +22,18 @@ public class Room {
     }
 
     protected void removeUser(User u) { users.remove(u); }
+
+    //determines whether a user is on a room's userlist
+    //returns true if user on list, false otherwise
+    protected boolean findUser(User u){
+        boolean found = false;
+        int i = 0;
+
+        while(!found && i < users.size()){
+            if(u.getName().equals(users.get(i).getName()))
+                found = true;
+        }
+
+        return found;
+    }
 }

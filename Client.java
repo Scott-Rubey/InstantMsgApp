@@ -129,19 +129,25 @@ public class Client {
         //if server returns info other than OK or ERR msgs, just return that info (i.e. lists, chat messages, etc)
         switch(retMsg){
             case "OK_CTRM":
-                toPrint = "Room Created\n";
+                toPrint = "\nRoom Created\n";
                 break;
             case "OK_JOIN":
-                toPrint = "Room joined\n";
+                toPrint = "\nRoom joined\n";
+                break;
+            case "OK_LEAV":
+                toPrint = "\nRoom left\n";
                 break;
             case "ERR_DUPLICATEROOM":
-                toPrint = "A room by that name already exists.  Please choose a different name.\n";
+                toPrint = "\nA room by that name already exists.  Please choose a different name.\n";
                 break;
             case "ERR_NOROOMS":
-                toPrint = "There are currently no rooms available to list\n";
+                toPrint = "\nThere are currently no rooms available to list\n";
                 break;
             case "ERR_NONEXISTENTROOM":
-                toPrint = "Room does not exist\n";
+                toPrint = "\nRoom does not exist\n";
+                break;
+            case "ERR_NOTINROOM":
+                toPrint = "\nYou are not currently in that room\n";
                 break;
             default:
                 toPrint = retMsg;

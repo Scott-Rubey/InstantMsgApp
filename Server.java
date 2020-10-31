@@ -166,7 +166,7 @@ public class Server {
         else {
             Room room = new Room(roomName);
             rooms.addRoom(room);
-            message = "CTRM_OK";
+            message = "OK_CTRM";
         }
 
         return message;
@@ -181,7 +181,6 @@ public class Server {
                 message += i+1 + ". " + rooms.getRooms().get(i).getName() + "\n";
         }
         else {
-            //message = "There are currently no rooms available to list\n";
             message = "ERR_NOROOMS";
         }
 
@@ -191,21 +190,36 @@ public class Server {
     protected String joinRoom(Command command){
         String message = "";
         User user = command.getUser();
+        String roomName = command.getRoom();
 
-        //parse the room index from the command
-        int i = Integer.parseInt(command.getMessage());
-        int roomNbr = i-1;
-
-        //find the room
-        if(i < 1 || i > rooms.getRooms().size())
-            message = "Room index out of range.\n";
-        else {
-            Room room = rooms.getRooms().get(roomNbr);
+        //verify room is on list; add user to room if found
+        Room room = findRoom(roomName);
+        if(room != null){
             room.addUser(user);
-            message = "You have been added to " + room.name + "\n";
+            message = "OK_JOIN";
         }
+        else
+            message = "ERR_NONEXISTENTROOM";
 
         return message;
+    }
+
+    protected Room findRoom(String roomName){
+        Room room = null;
+        boolean found = false;
+        int i = 0;
+
+        while(!found && i < rooms.getRooms().size()){
+            if(roomName.equals(rooms.getRooms().get(i).getName())){
+                found = true;
+                room = rooms.getRooms().get(i);
+                //room.addUser(user);
+                //message = "OK_JOIN";
+            }
+            ++i;
+        }
+
+        return room;
     }
 
     protected String listUsers(Command command){
@@ -222,5 +236,3 @@ public class Server {
 
 //TODO: when server gets a request to post a message to a room, it responds by sending all messages to every client on the userlist
 //And remember, the server needs to know which room it is posting a message to.  Do I need another field in the string for this?
-
-//TODO: parser needs to handle roomname and message

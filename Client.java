@@ -34,11 +34,10 @@ public class Client {
             }
             //if user opts to join an existing room
             else if (2 == choice){
-                System.out.println("Please enter the number of the room you would like to join: ");
-                int roomNum = in.nextInt();
-                in.nextLine();
+                System.out.println("Please enter the name of the room you would like to join: ");
+                String roomName = in.next();
 
-                command = username + " JOIN " + roomNum;
+                command = username + " JOIN " + roomName;
             }
             //if user opts to create a new room
             else if (3 == choice) {
@@ -110,14 +109,20 @@ public class Client {
         //return user-friendly message derived from server response.
         //if server returns info other than OK or ERR msgs, just return that info (i.e. lists, chat messages, etc)
         switch(retMsg){
-            case "CTRM_OK":
+            case "OK_CTRM":
                 toPrint = "Room Created\n";
+                break;
+            case "OK_JOIN":
+                toPrint = "Room joined\n";
                 break;
             case "ERR_DUPLICATEROOM":
                 toPrint = "A room by that name already exists.  Please choose a different name.\n";
                 break;
             case "ERR_NOROOMS":
                 toPrint = "There are currently no rooms available to list\n";
+                break;
+            case "ERR_NONEXISTENTROOM":
+                toPrint = "Room does not exist\n";
                 break;
             default:
                 toPrint = retMsg;
@@ -143,5 +148,3 @@ public class Client {
         return success;
     }
 }
-
-//TODO: return message handler: switch stmt containing server responses that returns client output

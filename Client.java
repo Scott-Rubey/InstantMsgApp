@@ -53,13 +53,15 @@ public class Client {
 
                 command = username + " LSMB " + roomName;
             }
-            //if user opts to post a message to a chat room
+            //if user opts to post a msgText to a chat room
             else if (5 == choice){
                 System.out.print("Please enter the name of the room you would like to post to: ");
                 String roomName = in.next();
+                in.nextLine();
 
-                System.out.print("Please enter your message: ");
-                String message = in.next();
+                System.out.print("Please enter your msgText: ");
+                String message = in.nextLine();
+//                msgText += in.nextLine();
 
                 command = username + " POST " + roomName + " " + message;
             }
@@ -75,10 +77,10 @@ public class Client {
                 command = username + " LEAV " + roomName;
             }
 
-            //send command to the server, capture the server's return message
+            //send command to the server, capture the server's return msgText
             String retMsg = client.sendCommand(command);
 
-            //send return message to handler, print result
+            //send return msgText to handler, print result
             System.out.print(msgHandler(retMsg));
 
             //return to menu
@@ -131,7 +133,7 @@ public class Client {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             out.writeObject(command);
 
-            //read message returned from server
+            //read msgText returned from server
             inputStream = new ObjectInputStream(clientSocket.getInputStream());
             Object obj = inputStream.readObject();
             message = obj.toString();
@@ -148,7 +150,7 @@ public class Client {
     protected static String msgHandler(String retMsg){
         String toPrint;
 
-        //return user-friendly message derived from server response.
+        //return user-friendly msgText derived from server response.
         //if server returns info other than OK or ERR msgs, just return that info (i.e. lists, chat messages, etc)
         switch(retMsg){
             case "OK_CTRM":

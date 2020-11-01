@@ -72,10 +72,10 @@ public class Server {
     }
 
     protected Command parseCommand(String objStr){
-        //split message from client into individual words
+        //split msgText from client into individual words
         //the first two are username and command code
         //the third, if present, is roomname
-        //then rejoin anything remaining to create message from user
+        //then rejoin anything remaining to create msgText from user
 
         String[] split = objStr.split(" ");
         String name = split[0];
@@ -87,10 +87,10 @@ public class Server {
         if(split.length >2)
            roomName = split[2];
 
-        //anything else in the array is the message from the user
+        //anything else in the array is the msgText from the user
         if(split.length > 3) {
             for (int i = 3; i < split.length; ++i)
-                message += split[i];
+                message += split[i] + " ";
         }
 
         //create User to associate with new Command
@@ -124,8 +124,13 @@ public class Server {
             case "LEAV":
                 retMsg = leaveRoom(command);
                 break;
+            /* list members of a chat room */
             case "LSMB":
                 retMsg = listMembers(command);
+                break;
+            /* post msgText to chat room */
+            case "POST":
+                retMsg = postToRoom(command);
                 break;
             default:
                 retMsg = "ERR_ILLEGALCOMMAND";
@@ -137,7 +142,7 @@ public class Server {
     //create a chatroom
     protected String createRoom(Command command){
         String roomName = command.getRoom();
-        String message = "";
+        String retMsg = "";
         boolean found = false;
 
         //search to see if roomname already exists
@@ -148,36 +153,36 @@ public class Server {
 
         //if roomname already exists, return error
         if(found)
-            message = "ERR_DUPLICATEROOM";
+            retMsg = "ERR_DUPLICATEROOM";
         //otherwise, create room, add to rooms list, and return OK
         else {
             Room room = new Room(roomName);
             rooms.addRoom(room);
-            message = "OK_CTRM";
+            retMsg = "OK_CTRM";
         }
 
-        return message;
+        return retMsg;
     }
 
     //list all chat rooms
     protected String listRooms(){
-        String message = "";
+        String retMsg = "";
 
-        //return message reflects either the list of available rooms, or that there are none to list
+        //return msgText reflects either the list of available rooms, or that there are none to list
         if(rooms.getRooms().size() > 0) {
             for (int i = 0; i < rooms.getRooms().size(); ++i)
-                message += i+1 + ". " + rooms.getRooms().get(i).getName() + "\n";
+                retMsg += i+1 + ". " + rooms.getRooms().get(i).getName() + "\n";
         }
         else {
-            message = "ERR_NOROOMS";
+            retMsg = "ERR_NOROOMS";
         }
 
-        return message;
+        return retMsg;
     }
 
     //join a chat room
     protected String joinRoom(Command command){
-        String message = "";
+        String retMsg = "";
         User user = command.getUser();
         String roomName = command.getRoom();
 
@@ -186,17 +191,17 @@ public class Server {
         Room room = rooms.findRoom(roomName);
         if(room != null){
             room.addUser(user);
-            message = "OK_JOIN";
+            retMsg = "OK_JOIN";
         }
         else
-            message = "ERR_NONEXISTENTROOM";
+            retMsg = "ERR_NONEXISTENTROOM";
 
-        return message;
+        return retMsg;
     }
 
     //list all members in a chat room
     protected String listMembers(Command command){
-        String message = "";
+        String retMsg = "";
         User user = command.getUser();
         String roomName = command.getRoom();
 
@@ -204,24 +209,24 @@ public class Server {
 
         //if room exists but is empty, return error
         if(room != null && room.getUsers().size() == 0)
-            message = "ERR_ROOMEMPTY";
+            retMsg = "ERR_ROOMEMPTY";
 
         //if room exists and has members, create a list
         else if(room != null && room.getUsers().size() > 0){
             for(int i = 0; i < room.getUsers().size(); ++i)
-                message += room.users.get(i).name + "\n";
+                retMsg += room.users.get(i).name + "\n";
         }
 
         //if room exists but is empty, return error
         else
-            message = "ERR_NONEXISTENTROOM";
+            retMsg = "ERR_NONEXISTENTROOM";
 
-        return message;
+        return retMsg;
     }
 
     //leave a chat room
     protected String leaveRoom(Command command){
-        String message = "";
+        String retMsg = "";
         User user = command.getUser();
         String roomName = command.getRoom();
 
@@ -233,19 +238,47 @@ public class Server {
             //if user is found in room, remove them and return OK
             if(userInRoom){
                 room.removeUser(user);
-                message = "OK_LEAV";
+                retMsg = "OK_LEAV";
             }
             //if room exists but user is not on room's userlist, return err
             else
-                message = "ERR_NOTINROOM";
+                retMsg = "ERR_NOTINROOM";
         }
         //if room does not exist, return error
         else
-            message = "ERR_NONEXISTENTROOM";
+            retMsg = "ERR_NONEXISTENTROOM";
 
-        return message;
+        return retMsg;
+    }
+
+    //post msgText to chat room
+    protected String postToRoom(Command command){
+        String retMsg = "";
+        User user = command.getUser();
+        String roomName = command.getRoom();
+
+        //find room, if it exists
+        Room room = rooms.findRoom(roomName);
+
+        //if room exists...
+        if(room != null){
+            boolean userInRoom = room.findUser(user);
+
+            //...and user is a member of the room, add msgText to room, return OK
+            if(userInRoom){
+                Message message = new Message(command.getMessage());
+                room.messages.addMessage(message);
+                retMsg = "OK_POST";
+                //TODO: send msgText to every user
+            }
+            //if user is not in room, do not create msgText object, return error
+            else
+                retMsg = "ERR_NOTINROOM";
+        }
+        //if room does not exist, return error
+        else
+            retMsg = "ERR_NONEXISTENTROOM";
+
+        return retMsg;
     }
 }
-
-//TODO: when server gets a request to post a message to a room, it responds by sending all messages to every client on the userlist
-//And remember, the server needs to know which room it is posting a message to.  Do I need another field in the string for this?

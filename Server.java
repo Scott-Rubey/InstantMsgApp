@@ -93,36 +93,14 @@ public class Server {
                 message += split[i];
         }
 
-        User user = addUser(name);
-        Command command = new Command(user, code, roomName, message);
-
-        return command;
-    }
-
-    protected User findUser(String name){
-        User user = null;
-        boolean found = false;
-
-        //find out if user currently resides in the database
-        for(int i = 0; i < users.getUsers().size(); ++i){
-            if(name.equals(users.getUsers().get(i).getName())) {
-                user = users.getUsers().get(i);
-                found = true;
-            }
-        }
-
-        //if not, add user
-        if(!found)
-            user = addUser(name);
-
-        return user;
-    }
-
-    protected User addUser(String name){
+        //create User to associate with new Command
         User user = new User(name);
         users.addUser(user);
 
-        return user;
+        //create new command object
+        Command command = new Command(user, code, roomName, message);
+
+        return command;
     }
 
     protected String exec(Command command) {

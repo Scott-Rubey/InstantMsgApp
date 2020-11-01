@@ -55,7 +55,13 @@ public class Client {
             }
             //if user opts to post a message to a chat room
             else if (5 == choice){
-                System.out.print("POST not yet implemented\n");
+                System.out.print("Please enter the name of the room you would like to post to: ");
+                String roomName = in.next();
+
+                System.out.print("Please enter your message: ");
+                String message = in.next();
+
+                command = username + " POST " + roomName + " " + message;
             }
             //if user opts to retrieve all messages posted to a chat room
             else if (6 == choice){
@@ -101,6 +107,21 @@ public class Client {
         return success;
     }
 
+    //disconnect from the server
+    protected boolean disconnect(){
+        boolean success = false;
+
+        try {
+            clientSocket.close();
+            success = true;
+        }
+        catch(IOException i) {
+            System.out.println(i);
+        }
+
+        return success;
+    }
+
     //send command to the server in the form of a string object
     protected String sendCommand(String command){
         String message = "";
@@ -139,6 +160,9 @@ public class Client {
             case "OK_LEAV":
                 toPrint = "\nRoom left\n";
                 break;
+            case "OK_POST":
+                toPrint = "\nMessage posted\n";
+                break;
             case "ERR_DUPLICATEROOM":
                 toPrint = "\nA room by that name already exists.  Please choose a different name.\n";
                 break;
@@ -162,20 +186,5 @@ public class Client {
         }
 
         return toPrint;
-    }
-
-    //disconnect from the server
-    protected boolean disconnect(){
-        boolean success = false;
-
-        try {
-            clientSocket.close();
-            success = true;
-        }
-        catch(IOException i) {
-            System.out.println(i);
-        }
-
-        return success;
     }
 }

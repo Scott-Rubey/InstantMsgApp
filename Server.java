@@ -266,10 +266,13 @@ public class Server {
 
             //...and user is a member of the room, add msgText to room, return OK
             if(userInRoom){
-                Message message = new Message(command.getMessage());
+                Message message = new Message(command.getUser().getName(), command.getMessage());
                 room.messages.addMessage(message);
                 retMsg = "OK_POST";
+
                 //TODO: send msgText to every user
+                //send new post to all users in that room
+                sendToMembers(message);
             }
             //if user is not in room, do not create msgText object, return error
             else
@@ -280,5 +283,10 @@ public class Server {
             retMsg = "ERR_NONEXISTENTROOM";
 
         return retMsg;
+    }
+
+    //send new message post to all users in room
+    protected String sendToMembers(Message message){
+        return "";
     }
 }

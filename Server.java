@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 
 public class Server {
     RoomList rooms;
@@ -271,7 +272,7 @@ public class Server {
             //...and user is a member of the room, add msgText to room, return OK
             if(userInRoom){
                 Message message = new Message(command.getUser().getName(), command.getMessage());
-                room.messages.addMessage(message);
+                room.addMessage(message);
                 retMsg = "OK_POST";
 
                 //TODO: send msgText to every user
@@ -298,13 +299,20 @@ public class Server {
         //find room, if it exists
         Room room = rooms.findRoom(roomName);
 
-        //if room exists...
+        //if room exists, get its messages and process accordingly
         if(room != null) {
             boolean userInRoom = room.findUser(user);
+            ArrayList<Message> messages = room.getMessages();
 
-            //...and user is a member of the room, return all messages to user
-            if (userInRoom) {
-                ;
+            //if user is a member of the room but there are no messages, return error
+            if (userInRoom && messages.size() == 0)
+                retMsg = "ERR_NOMESSAGES";
+
+            //if user is a member of the room and there are messages, return them
+            else if(userInRoom && messages.size() > 0){
+                retMsg += "\nMessages posted to " + roomName + ":\n\n";
+                for(Message msg:messages)
+                    retMsg += msg.toString() + "\n";
             }
             //if user is not in room, return error
             else

@@ -12,7 +12,8 @@ public class Message {
         this.msgText = message;
     }
 
-    protected String getMsgText(){
-        return this.msgText;
+    @Override
+    public String toString(){
+        return this.timestamp + "\nUser: " + this.username + "\n" + this.msgText + "\n";
     }
 }

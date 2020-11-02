@@ -59,7 +59,7 @@ public class Client {
                 String roomName = in.next();
                 in.nextLine();
 
-                System.out.print("Please enter your msgText: ");
+                System.out.print("Please enter your message: ");
                 String message = in.nextLine();
 
                 command = username + " POST " + roomName + " " + message;
@@ -184,6 +184,9 @@ public class Client {
                 break;
             case "ERR_ILLEGALCOMMAND":
                 toPrint = "\nClient error: illegal command.  Please contact the developer.\n";
+                break;
+            case "ERR_NOMESSAGES":
+                toPrint = "\nNo messages have been posted to this room\n";
                 break;
             default:
                 toPrint = "\n" + retMsg;

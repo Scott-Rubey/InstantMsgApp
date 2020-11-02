@@ -292,8 +292,27 @@ public class Server {
     //retrieve all messages from a chat room
     protected String retrieveMessages(Command command){
         String retMsg = "";
+        User user = command.getUser();
+        String roomName = command.getRoom();
 
-        
+        //find room, if it exists
+        Room room = rooms.findRoom(roomName);
+
+        //if room exists...
+        if(room != null) {
+            boolean userInRoom = room.findUser(user);
+
+            //...and user is a member of the room, return all messages to user
+            if (userInRoom) {
+                ;
+            }
+            //if user is not in room, return error
+            else
+                retMsg = "ERR_NOTINROOM";
+        }
+        //if room does not exist, return error
+        else
+            retMsg = "ERR_NONEXISTENTROOM";
 
         return retMsg;
     }

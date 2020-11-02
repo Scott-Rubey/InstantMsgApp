@@ -132,6 +132,10 @@ public class Server {
             case "POST":
                 retMsg = postToRoom(command);
                 break;
+            /* retrieve all messages from a chat room */
+            case "RETV":
+                retMsg = retrieveMessages(command);
+                break;
             default:
                 retMsg = "ERR_ILLEGALCOMMAND";
         }
@@ -281,6 +285,15 @@ public class Server {
         //if room does not exist, return error
         else
             retMsg = "ERR_NONEXISTENTROOM";
+
+        return retMsg;
+    }
+
+    //retrieve all messages from a chat room
+    protected String retrieveMessages(Command command){
+        String retMsg = "";
+
+        
 
         return retMsg;
     }

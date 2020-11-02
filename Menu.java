@@ -14,7 +14,7 @@ public class Menu {
             System.out.print("\n2 - Join chat room");
             System.out.print("\n3 - Create new chat room");
             System.out.print("\n4 - List users in chat room");
-            System.out.print("\n5 - Post msgText to a chat room");
+            System.out.print("\n5 - Post message to a chat room");
             System.out.print("\n6 - Show all messages in a chat room");
             System.out.print("\n7 - Leave chat room");
             System.out.print("\n8 - Exit Program\n");

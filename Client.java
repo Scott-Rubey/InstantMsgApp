@@ -61,13 +61,15 @@ public class Client {
 
                 System.out.print("Please enter your msgText: ");
                 String message = in.nextLine();
-//                msgText += in.nextLine();
 
                 command = username + " POST " + roomName + " " + message;
             }
             //if user opts to retrieve all messages posted to a chat room
             else if (6 == choice){
-                System.out.print("RETV not yet implemented\n");
+                System.out.print("Please enter the name of the room whose messages you would like shown: ");
+                String roomName = in.next();
+
+                command = username + " RETV " + roomName;
             }
             //if user opts to leave a chat room
             else if (7 == choice){

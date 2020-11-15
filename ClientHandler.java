@@ -16,6 +16,7 @@ public class ClientHandler extends Thread {
     public void run(){
         boolean dsct = false;  //represents client's wish to disconnect
         boolean crashed = false;
+        Command command = null;
         String message;
         String code = "";
 
@@ -23,7 +24,7 @@ public class ClientHandler extends Thread {
         while(!dsct && !crashed){
             try {
                 message = inStream.readUTF();
-                Command command = parseCommand(message);
+                command = parseCommand(message);
                 code = command.getCode();
 
                 //if command code is "DSCT", close the socket
@@ -40,13 +41,15 @@ public class ClientHandler extends Thread {
                 }
 
             } catch (IOException i) {
+                //if client crashes, remove them from all rooms
+                rmvUsrAllRooms(command.getUser());
                 crashed = true;
             }
         }
 
         //print readable error if client unexpectedly disconnects
         if(crashed)
-            System.out.println("Client " + this.socket + " disconnected\n");
+            System.out.println("Client " + this.socket + " crashed\n");
 
         //close the input and output streams
         try {

@@ -1,122 +1,140 @@
-import java.net.*;
 import java.io.*;
+import java.net.*;
 import java.util.Scanner;
 
 public class Client {
     protected static Socket clientSocket = null;
-    protected static ObjectOutputStream out = null;
-    protected static Scanner in = new Scanner(System.in);
+    protected static Scanner scanner = new Scanner(System.in);
     protected static String username = null;
-    protected static ObjectInputStream inputStream = null;
+    protected static DataInputStream inputStream = null;
+    protected static DataOutputStream outputStream = null;
 
-    public static void main(String argv[]){
-        Client client = new Client();
+    public static void main(String[] args) {
+        try {
+            System.out.print("Please enter your username: ");
+            username = scanner.next();
+            System.out.print("\n");
 
-        System.out.print("Please enter your username: ");
-        username = in.next();
-        System.out.print("\n");
+            //connect to server
+            boolean connected = connect("127.0.0.1", 6789);
+            if(connected)
+                System.out.println("Connected to server");
+            else
+                System.out.println("Error connecting to server");
 
-        //connect to server
-        boolean connected = client.connect("127.0.0.1", 6789);
-        if(connected)
-            System.out.println("Connected to server");
-        else
-            System.out.println("Error connecting to server");
+            // obtaining input and out streams
+            inputStream = new DataInputStream(clientSocket.getInputStream());
+            outputStream = new DataOutputStream(clientSocket.getOutputStream());
 
-        int choice = Menu.topMenu();
+            boolean disc = false;  //user does not presently wish to disconnect
+            int choice = Menu.topMenu();
 
-        while (8 != choice){
-            String command = null;
+            //while user wishes to stay connected
+            while (!disc){
+                String command = null;
 
-            //if user opts to list existing rooms
-            if (1 == choice){
-                command = username + " LIST";
+                //if user opts to list existing rooms
+                if (1 == choice){
+                    command = username + " LIST";
+                }
+                //if user opts to join an existing room
+                else if (2 == choice){
+                    System.out.println("Please enter the name of the room you would like to join: ");
+                    String roomName = scanner.next();
+
+                    command = username + " JOIN " + roomName;
+                }
+                //if user opts to create a new room
+                else if (3 == choice) {
+                    System.out.print("Please enter the name of the room you would like to create (no spaces allowed): ");
+                    String newRoomName = scanner.next();
+
+                    command = username + " CTRM " + newRoomName;
+                }
+                //if user opts to list all users in a chat room
+                else if (4 == choice){
+                    System.out.print("Please enter the name of the room whose members you would like to list: ");
+                    String roomName = scanner.next();
+
+                    command = username + " LSMB " + roomName;
+                }
+                //if user opts to post a msgText to a chat room
+                else if (5 == choice){
+                    System.out.print("Please enter the name of the room you would like to post to: ");
+                    String roomName = scanner.next();
+                    scanner.nextLine();
+
+                    System.out.print("Please enter your message: ");
+                    String message = scanner.nextLine();
+
+                    command = username + " POST " + roomName + " " + message;
+                }
+                //if user opts to retrieve all messages posted to a chat room
+                else if (6 == choice){
+                    System.out.print("Please enter the name of the room whose messages you would like shown: ");
+                    String roomName = scanner.next();
+
+                    command = username + " RETV " + roomName;
+                }
+                //if user opts to leave a chat room
+                else if (7 == choice){
+                    System.out.print("Please enter the name of the room you would like to leave: ");
+                    String roomName = scanner.next();
+
+                    command = username + " LEAV " + roomName;
+                }
+                //if user opts to disconnect from server
+                else if (8 == choice){
+                    command = username + " DSCT";
+                    disc = true;
+                }
+
+                //send command to server
+                outputStream.writeUTF(command);
+
+                //if the user hasn't disconnected, read the return message
+                if(!disc) {
+                    String retMsg = inputStream.readUTF();
+                    System.out.println(msgHandler(retMsg));
+
+                    choice = Menu.topMenu();
+                }
             }
-            //if user opts to join an existing room
-            else if (2 == choice){
-                System.out.println("Please enter the name of the room you would like to join: ");
-                String roomName = in.next();
 
-                command = username + " JOIN " + roomName;
-            }
-            //if user opts to create a new room
-            else if (3 == choice) {
-                System.out.print("Please enter the name of the room you would like to create: ");
-                String newRoomName = in.next();
-
-                command = username + " CTRM " + newRoomName;
-            }
-            //if user opts to list all users in a chat room
-            else if (4 == choice){
-                System.out.print("Please enter the name of the room whose members you would like to list: ");
-                String roomName = in.next();
-
-                command = username + " LSMB " + roomName;
-            }
-            //if user opts to post a msgText to a chat room
-            else if (5 == choice){
-                System.out.print("Please enter the name of the room you would like to post to: ");
-                String roomName = in.next();
-                in.nextLine();
-
-                System.out.print("Please enter your message: ");
-                String message = in.nextLine();
-
-                command = username + " POST " + roomName + " " + message;
-            }
-            //if user opts to retrieve all messages posted to a chat room
-            else if (6 == choice){
-                System.out.print("Please enter the name of the room whose messages you would like shown: ");
-                String roomName = in.next();
-
-                command = username + " RETV " + roomName;
-            }
-            //if user opts to leave a chat room
-            else if (7 == choice){
-                System.out.print("Please enter the name of the room you would like to leave: ");
-                String roomName = in.next();
-
-                command = username + " LEAV " + roomName;
-            }
-
-            //send command to the server, capture the server's return msgText
-            String retMsg = client.sendCommand(command);
-
-            //send return msgText to handler, print result
-            System.out.print(msgHandler(retMsg));
-
-            //return to menu
-            choice = Menu.topMenu();
+            //disconnect from server
+            boolean disconnected = disconnect();
+            if(disconnected)
+                System.out.println("Disconnected from server\n");
+            else
+                System.out.println("Error disconnecting from server");
+        }catch(Exception e){
+            System.out.println("Server has crashed. Please try again later.");
         }
-
-        //disconnect from server
-        boolean disconnected = client.disconnect();
-        if(disconnected)
-            System.out.println("Disconnected from server");
-        else
-            System.out.println("Error disconnecting from server");
     }
 
     //connect to the server
-    protected boolean connect(String address, int port) {
+    protected static boolean connect(String address, int port) {
         boolean success = false;
 
         try {
             clientSocket = new Socket(address, port);
             success = true;
         } catch (IOException i) {
-            System.out.println(i);
+            System.out.println("Error connecting to server");
         }
 
         return success;
     }
 
     //disconnect from the server
-    protected boolean disconnect(){
+    protected static boolean disconnect(){
         boolean success = false;
 
         try {
             clientSocket.close();
+            inputStream.close();
+            outputStream.close();
+            scanner.close();
             success = true;
         }
         catch(IOException i) {
@@ -124,28 +142,6 @@ public class Client {
         }
 
         return success;
-    }
-
-    //send command to the server in the form of a string object
-    protected String sendCommand(String command){
-        String message = "";
-
-        try {
-            //send command to server
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-            out.writeObject(command);
-
-            //read msgText returned from server
-            inputStream = new ObjectInputStream(clientSocket.getInputStream());
-            Object obj = inputStream.readObject();
-            message = obj.toString();
-        }catch(IOException io){
-            message = "Server communcation error";
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return message;
     }
 
     //handle messages returned from server
@@ -166,6 +162,9 @@ public class Client {
                 break;
             case "OK_POST":
                 toPrint = "\nMessage posted\n";
+                break;
+            case "ERR_ALREADYJOINED":
+                toPrint = "\nYou are already a member of that room.\n";
                 break;
             case "ERR_DUPLICATEROOM":
                 toPrint = "\nA room by that name already exists.  Please choose a different name.\n";

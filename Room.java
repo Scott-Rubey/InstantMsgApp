@@ -33,7 +33,7 @@ public class Room {
         this.messages.add(message);
     }
 
-    //determines whether a user is on a room's userlist
+    //determines whether a user is on a room'socket userlist
     //returns true if user on list, false otherwise
     protected boolean findUser(User u){
         boolean found = false;
@@ -42,6 +42,8 @@ public class Room {
         while(!found && i < users.size()){
             if(u.getName().equals(users.get(i).getName()))
                 found = true;
+
+            ++i;
         }
 
         return found;

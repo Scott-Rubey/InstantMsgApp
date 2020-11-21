@@ -108,7 +108,9 @@ public class Client {
             else
                 System.out.println("Error disconnecting from server");
         }catch(Exception e){
+            //print user friendly message and close all open resources
             System.out.println("Server has crashed. Please try again later.");
+            disconnect();
         }
     }
 
